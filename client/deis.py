@@ -19,6 +19,7 @@ Subcommands, use ``deis help [subcommand]`` to learn more::
   apps          manage applications used to provide services
   containers    manage containers used to handle requests and jobs
   config        manage environment variables that define app config
+  domains       manage and assign domain names to your applications
   builds        manage builds created using `git push`
   releases      manage releases of an application
 
