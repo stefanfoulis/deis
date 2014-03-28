@@ -960,6 +960,84 @@ class DeisClient(object):
         else:
             raise ResponseError(response)
 
+    def domains(self, args):
+        """
+        Valid commands for domains:
+
+        domains:add           bind a domain to an application
+        domains:list          list domains bound to an application
+        domains:remove        unbind a domain from an application
+
+        Use `deis help [command]` to learn more
+        """
+        return self.domains_list(args)
+
+    def domains_add(self, args):
+        """
+        Bind a domain to an application
+
+        Usage: deis domains:add <domain> [--app=<app>]
+        """
+        app = args.get('--app')
+        if not app:
+            app = self._session.app
+
+        domain = args.get('<domain>')
+        if domain is None:
+            print("Faulty input")
+            return
+
+        body = {'domain': domain}
+        response = self._dispatch(
+            'post', "/api/apps/{app}/domains".format(app=app),
+            json.dumps(body))
+
+        if response.status_code == requests.codes.ok:  # @UndefinedVariable
+            print("Domain created")
+        else:
+            raise ResponseError(response)
+
+    def domains_remove(self, args):
+        """
+        Unbind a domain for an application
+
+        Usage: deis domains:rm <domain> [--app=<app>]
+        """
+        app = args.get('--app')
+        if not app:
+            app = self._session.app
+
+        domain = args.get('<domain>')
+        if domain is None:
+            print("Faulty input")
+            return
+
+        response = self._dispatch(
+            'delete', "/api/domains/{domain}".format(app=app, domain=domain))
+
+        if response.status_code == requests.codes.ok:  # @UndefinedVariable
+            print("Domain removed")
+        else:
+            raise ResponseError(response)
+
+    def domains_list(self, args):
+        """
+        List domains bound to an application
+
+        Usage: deis domains:list [--app=<app>]
+        """
+        app = args.get('--app')
+        if not app:
+            app = self._session.app
+
+        response = self._dispatch(
+            'get', "/api/apps/{app}/domains".format(app=app))
+
+        if response.status_code == requests.codes.ok:  # @UndefinedVariable
+            print(json.dumps(response.json(), indent=2))
+        else:
+            raise ResponseError(response)
+
     def flavors(self, args):
         """
         Valid commands for flavors:
@@ -1964,84 +2042,6 @@ class DeisClient(object):
         else:
             raise ResponseError(response)
 
-    def domains(self, args):
-        """
-        Valid commands for domains:
-
-        domains:add           bind a domain to an application
-        domains:list          list domains bound to an application
-        domains:remove        unbind a domain from an application
-
-        Use `deis help [command]` to learn more
-        """
-        return self.domains_list(args)
-
-
-    def domains_add(self, args):
-        """
-        Bind a domain to an application
-
-        Usage: deis domains:add <domain> [--app=<app>]
-        """
-        app = args.get('--app')
-        if not app:
-            app = self._session.app
-
-        domain = args.get('<domain>')
-        if domain is None:
-            print("Faulty input")
-            return
-
-        body = {'domain': domain}
-        response = self._dispatch(
-            'post', "/api/apps/{app}/domains".format(app=app),
-            json.dumps(body))
-
-        if response.status_code == requests.codes.ok:  # @UndefinedVariable
-            print("Domain created")
-        else:
-            raise ResponseError(response)
-
-    def domains_remove(self, args):
-        """
-        Unbind a domain for an application
-
-        Usage: deis domains:rm <domain> [--app=<app>]
-        """
-        app = args.get('--app')
-        if not app:
-            app = self._session.app
-
-        domain = args.get('<domain>')
-        if domain is None:
-            print("Faulty input")
-            return
-
-        response = self._dispatch(
-            'delete', "/api/domains/{domain}".format(app=app, domain=domain))
-
-        if response.status_code == requests.codes.ok:  # @UndefinedVariable
-            print("Domain removed")
-        else:
-            raise ResponseError(response)
-
-    def domains_list(self, args):
-        """
-        List domains bound to an application
-
-        Usage: deis domains:list [--app=<app>]
-        """
-        app = args.get('--app')
-        if not app:
-            app = self._session.app
-
-        response = self._dispatch(
-            'get', "/api/apps/{app}/domains".format(app=app))
-
-        if response.status_code == requests.codes.ok:  # @UndefinedVariable
-            print(json.dumps(response.json(), indent=2))
-        else:
-            raise ResponseError(response)
 
     def releases(self, args):
         """
