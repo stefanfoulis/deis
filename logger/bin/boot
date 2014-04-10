@@ -4,7 +4,7 @@
 #
 
 # fail hard and fast even on pipelines
-set -eo pipefail
+#set -eo pipefail
 
 # set debug based on envvar
 [[ $DEBUG ]] && set -x
@@ -34,11 +34,8 @@ until confd -onetime -node $ETCD -config-file /app/confd.toml; do
 	sleep $(($ETCD_TTL/2))  # sleep for half the TTL
 done
 
-# cleanup old pidfile's
-test -e /var/run/rsyslog.pid && rm -f /var/run/rsyslog.pid
-
 # spawn the service in the background
-/usr/sbin/rsyslogd -n &
+/opt/logstash/bin/logstash -f /etc/logstash.conf -l /var/log/logstash.log &
 SERVICE_PID=$!
 
 # smart shutdown on SIGINT and SIGTERM
@@ -71,7 +68,7 @@ if [[ ! -z $PUBLISH ]]; then
 		etcdctl --no-sync -C $ETCD set $ETCD_PATH/port $PORT --ttl $ETCD_TTL >/dev/null
 		sleep $(($ETCD_TTL/2)) # sleep for half the TTL
 	done
-	
+
 	# if the loop quits, something went wrong
 	exit 1
 
