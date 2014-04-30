@@ -19,8 +19,6 @@ are:
 3) Your application listens to $PORT
 4) Your Dockerfile exposes port 5000.
 
-This is so `slugrunner`_ can bind your application to an available port on the runtime host.
-
 For example:
 
 .. code-block:: console
@@ -37,5 +35,3 @@ For example:
 
 This will serve your application's root directory on a static file server using Docker's official
 CentOS image. Note that the web process listens on $PORT.
-
-.. _`slugrunner`: https://github.com/deis/slugrunner
